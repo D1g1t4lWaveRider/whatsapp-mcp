@@ -662,7 +662,7 @@ func downloadMedia(client *whatsmeow.Client, messageStore *MessageStore, message
 // Extract direct path from a WhatsApp media URL
 func extractDirectPathFromURL(url string) string {
 	// The direct path is typically in the URL, we need to extract it
-	// Example URL: https://mmg.whatsapp.net/v/t62.7118-24/13812002_698058036224062_3424455886509161511_n.enc?ccb=11-4&oh=...
+	// Example URL: https://mmg.whatsapp.net/o1/v/t24/f2/m239/AQN...?ccb=9-4&oh=...&oe=...&_nc_sid=e6ed6c&mms3=true
 
 	// Find the path part after the domain
 	parts := strings.SplitN(url, ".net/", 2)
@@ -670,10 +670,10 @@ func extractDirectPathFromURL(url string) string {
 		return url // Return original URL if parsing fails
 	}
 
-	pathPart := parts[1]
-
-	// Remove query parameters
-	pathPart = strings.SplitN(pathPart, "?", 2)[0]
+	// Keep the query string: oh/oe are the CDN signature and the CDN answers
+	// 403 without them. whatsmeow appends "&hash=..." to this path, so it must
+	// keep its "?". Only mms3=true belongs to the full URL, not the direct path.
+	pathPart := strings.Replace(parts[1], "&mms3=true", "", 1)
 
 	// Create proper direct path format
 	return "/" + pathPart

@@ -5,3 +5,5 @@ whatsapp.log
 *.exe
 CLAUDE.md
 WhatsAppMCPBridge.xml
+# Downloaded chat media (private)
+whatsapp-bridge/store/
